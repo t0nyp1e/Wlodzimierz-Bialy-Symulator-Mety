@@ -135,6 +135,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 136
   radius: 5
+  damage: 50
 --- !u!54 &4286009022879953223
 Rigidbody:
   m_ObjectHideFlags: 0

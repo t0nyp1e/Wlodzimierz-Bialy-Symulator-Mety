@@ -8,6 +8,7 @@ public class Missile : MonoBehaviour
     public float speed;
     public LayerMask layerMask;
     public float radius;
+    public int damage;
 
     void Start()
     {
@@ -17,13 +18,43 @@ public class Missile : MonoBehaviour
 
     void OnCollisionEnter(Collision collider)
     {
-        ContactPoint contact = collider.contacts[0];
-        Collider[] hitColliders = Physics.OverlapSphere(contact.point, radius, layerMask);
-
-        foreach(Collider col in hitColliders)
+        if(collider.gameObject.tag != "Enemy")
         {
-            Debug.Log("Boomed" + col.gameObject.name);
+            ContactPoint contact = collider.contacts[0];
+            Collider[] hitColliders = Physics.OverlapSphere(contact.point, radius, layerMask);
+
+            foreach (Collider col in hitColliders)
+            {
+                float Distance = Vector3.Distance(col.gameObject.transform.position, transform.position);
+                float Damage;
+                Damage = damage / (Distance / 3);
+                if(col.gameObject.tag == "Enemy")
+                {
+                    col.gameObject.GetComponent<Enemy>().AddDamage(Mathf.RoundToInt(Damage));
+                }
+
+                Debug.Log("Boomed" + col.gameObject.name);
+            }
         }
+
+        else
+        {
+            collider.gameObject.GetComponent<Enemy>().AddDamage(100);
+
+            ContactPoint contact = collider.contacts[0];
+            Collider[] hitColliders = Physics.OverlapSphere(contact.point, radius, layerMask);
+
+            foreach (Collider col in hitColliders)
+            {
+                float Distance = Vector3.Distance(col.gameObject.transform.position, transform.position);
+                float Damage;
+                Damage = damage / Distance;
+                col.gameObject.SendMessage("AddDamage", Mathf.RoundToInt(Damage));
+
+                Debug.Log("Boomed" + col.gameObject.name);
+            }
+        }
+        
 
         Destroy(this.gameObject);
     }
